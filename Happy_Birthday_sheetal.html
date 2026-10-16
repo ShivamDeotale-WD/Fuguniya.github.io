@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! Fuguniya💖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'script': ['"Dancing Script"', 'cursive'],
+                        'sans': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        pink: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .screen { display: none; opacity: 0; transition: opacity 0.5s ease-in-out; }
+        .screen.active { display: flex; opacity: 1; }
+        
+        /* Gift Animation */
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-gentle { animation: bounce-gentle 2s infinite; }
+        
+        /* Candle Animation */
+        .flame {
+            width: 20px;
+            height: 35px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #ff9d00, 0 0 40px #ff9d00;
+            animation: flicker 0.5s infinite alternate;
+            transition: all 0.5s;
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(0.9) skewX(2deg); opacity: 0.8; }
+        }
+        .flame.out {
+            opacity: 0;
+            transform: translateX(-50%) scale(0) translateY(-20px);
+            box-shadow: none;
+        }
+        
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-purple-50 to-pink-200 min-h-screen text-gray-800">
+
+    <!-- Audio Element (Placeholder royalty free birthday tune) -->
+    <audio id="bday-audio" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=happy-birthday-to-you-113974.mp3" preload="auto"></audio>
+
+    <!-- Screen 1: Countdown -->
+    <div id="screen-countdown" class="screen active flex-col items-center justify-center min-h-screen p-6">
+        <h1 class="font-script text-5xl text-pink-600 mb-8 text-center">Something special is coming...</h1>
+        <div class="flex gap-4 text-center">
+            <div class="glass p-4 rounded-xl shadow-lg min-w-[80px]">
+                <div id="cd-sec" class="text-4xl font-bold text-pink-500">3</div>
+                <div class="text-xs uppercase tracking-wider mt-1 text-gray-500">Seconds</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Gift Reveal -->
+    <div id="screen-gift" class="screen flex-col items-center justify-center min-h-screen p-6 text-center cursor-pointer">
+        <h1 class="font-script text-5xl text-pink-600 mb-8">Tap to Open!</h1>
+        <div class="text-9xl animate-bounce-gentle" onclick="openGift()">
+            🎁
+        </div>
+        <p class="mt-8 text-gray-500 font-light">A little surprise awaits you...</p>
+    </div>
+
+    <!-- Screen 3: Letter -->
+    <div id="screen-letter" class="screen flex-col items-center justify-center min-h-screen p-6">
+        <div class="glass max-w-lg w-full p-8 rounded-3xl shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-300 to-pink-500"></div>
+            <h2 class="font-script text-4xl text-pink-600 mb-6 text-center">My Fuguniya,</h2>
+            <p class="text-gray-700 leading-relaxed mb-6 whitespace-pre-line">
+                Happy Birthday! 🎉
+                
+                On your special day, I just want you to know how much you mean to me. You bring light, laughter, and so much love.
+
+                May your day be filled with all the happiness you deserve, and may this year bring you endless success, peace, and joy. Always stay the amazing person you are—the world is better with you in it.
+
+                Love you always.
+                
+                With all my heart,
+                Your Husband 💖
+            </p>
+            <button onclick="nextScreen('screen-password')" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 rounded-xl transition shadow-md hover:shadow-lg">
+                Continue to your memories
+            </button>
+        </div>
+    </div>
+
+    <!-- Screen 4: Password -->
+    <div id="screen-password" class="screen flex-col items-center justify-center min-h-screen p-6">
+        <div class="glass max-w-sm w-full p-8 rounded-3xl shadow-xl text-center">
+            <h2 class="font-script text-4xl text-pink-600 mb-4">Secret Gallery</h2>
+            <p class="text-gray-500 mb-6 text-sm">Enter the magic word to unlock our memories. (Hint: It's a 4 letter word for ❤️)</p>
+            <input type="password" id="password-input" class="w-full text-center px-4 py-3 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 mb-4" placeholder="Password">
+            <p id="pwd-error" class="text-red-400 text-sm hidden mb-4">Oops, that's not it!</p>
+            <button onclick="checkPassword()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 rounded-xl transition">Unlock</button>
+        </div>
+    </div>
+
+    <!-- Screen 5: Albums -->
+    <div id="screen-albums" class="screen flex-col items-center min-h-screen p-6 pt-12 pb-24">
+        <h2 class="font-script text-5xl text-pink-600 mb-8 text-center">Our Memories</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full" id="album-grid">
+            <!-- Albums generated via JS -->
+        </div>
+        <button onclick="nextScreen('screen-cake')" class="fixed bottom-6 bg-white/80 backdrop-blur text-pink-600 font-medium py-3 px-8 rounded-full shadow-lg border border-pink-200 hover:bg-pink-50 transition z-10">
+            Make a Wish &rarr;
+        </button>
+    </div>
+
+    <!-- Album Modal -->
+    <div id="album-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex-col pb-10 overflow-y-auto">
+        <div class="sticky top-0 p-4 flex justify-between items-center bg-black/50 backdrop-blur text-white z-10">
+            <h3 id="modal-title" class="font-script text-3xl text-pink-300">Album</h3>
+            <button onclick="closeAlbum()" class="text-4xl leading-none">&times;</button>
+        </div>
+        <div class="p-6 grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto w-full" id="modal-photos">
+            <!-- Photos go here -->
+        </div>
+    </div>
+
+    <!-- Screen 6: Cake & Candle -->
+    <div id="screen-cake" class="screen flex-col items-center justify-center min-h-screen p-6 text-center select-none">
+        <h2 class="font-script text-5xl text-pink-600 mb-12">Make a Wish!</h2>
+        
+        <div class="relative mb-16">
+            <div class="w-48 h-24 bg-pink-300 rounded-xl relative shadow-lg border-b-4 border-pink-400">
+                <div class="absolute -top-4 w-full h-8 bg-pink-200 rounded-[50%]"></div>
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 w-4 h-16 bg-white border-2 border-gray-100 rounded-t-md">
+                    <div id="candle-flame" class="flame"></div>
+                </div>
+            </div>
+        </div>
+
+        <button id="blow-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-medium py-4 px-10 rounded-full shadow-xl transition-transform transform active:scale-95 text-lg">
+            Hold to Blow (2s)
+        </button>
+        <div class="w-48 h-2 bg-gray-200 rounded-full mt-6 overflow-hidden">
+            <div id="blow-progress" class="h-full bg-pink-500 w-0 transition-all duration-[100ms] ease-linear"></div>
+        </div>
+    </div>
+
+    <!-- Screen 7: Final -->
+    <div id="screen-final" class="screen flex-col items-center justify-center min-h-screen p-6 text-center">
+        <h1 class="font-script text-7xl text-pink-600 mb-6 drop-shadow-sm">I Love You!</h1>
+        <p class="text-xl text-gray-700 max-w-md font-light glass p-6 rounded-2xl shadow-xl shadow-pink-200/50">
+            Thank you for being the most amazing person. Here is to many more birthdays together! ❤️
+        </p>
+    </div>
+
+    <script>
+        // State management
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                setTimeout(() => s.style.display = 'none', 500); 
+            });
+            setTimeout(() => {
+                const target = document.getElementById(id);
+                target.style.display = 'flex';
+                void target.offsetWidth;
+                target.classList.add('active');
+            }, 500);
+        }
+
+        function nextScreen(id) {
+            showScreen(id);
+        }
+
+        // 1. Countdown Logic
+        let count = 3;
+        const cdInterval = setInterval(() => {
+            count--;
+            document.getElementById('cd-sec').innerText = count;
+            if (count <= 0) {
+                clearInterval(cdInterval);
+                nextScreen('screen-gift');
+            }
+        }, 1000);
+
+        // 2. Gift Reveal
+        function openGift() {
+            const audio = document.getElementById('bday-audio');
+            audio.play().catch(e => console.log("Audio play blocked by browser:", e));
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ffc0cb', '#ff69b4', '#db2777'] });
+            nextScreen('screen-letter');
+        }
+
+        // 3. Password Logic
+        function checkPassword() {
+            const pwd = document.getElementById('password-input').value.toLowerCase().trim();
+            if (pwd === 'love') {
+                document.getElementById('pwd-error').classList.add('hidden');
+                initAlbums();
+                nextScreen('screen-albums');
+            } else {
+                document.getElementById('pwd-error').classList.remove('hidden');
+            }
+        }
+
+        /* 
+        ========================================================
+        4. PHOTO ALBUM CONFIGURATION 
+        ========================================================
+        To use your own photos:
+        1. Create a folder named "photos" in the same directory as this HTML file.
+        2. Put your images inside that folder (e.g., photo1.jpg, photo2.jpg).
+        3. Replace the link below with your file path: e.g., "photos/photo1.jpg"
+        */
+        const albums = [
+            { 
+                title: "Sweet Moments", 
+                cover: "https://i.ibb.co/HLZPBrVb/20250530-192859.jpg",
+                photos: [
+                    "https://i.ibb.co/rKYXcpsP/20241006-133733.jpg",
+                    "https://i.ibb.co/Lz1RPLd8/20250413-163845.jpg",
+                    "https://i.ibb.co/S793BFcJ/20250525-172252.jpg",
+                    "https://i.ibb.co/fzwTLN8g/20250613-082902.jpg",
+                    "https://i.ibb.co/ZzkpFsGb/20250810-205138.jpg",
+                    "https://i.ibb.co/Fk7ccgRZ/20250826-170958.jpg"
+                ]
+            },
+            { 
+                title: "Adventures", 
+                cover: "https://i.ibb.co/Wvdng3Y7/20250119-144224.jpg",
+                photos: [
+                    "https://i.ibb.co/dJ3HVdJL/20250202-100705.jpg",
+                    "https://i.ibb.co/GfZ2YP8m/20250914-191042.jpg",
+                    "https://i.ibb.co/27d28NMn/20250921-192014.jpg",
+                    "https://i.ibb.co/5WMrYKsM/20260304-175530.jpg",
+                    "https://i.ibb.co/849VMPzQ/20260430-154957.jpg",
+                    "https://i.ibb.co/tPQyHrn4/IMG-20250204-WA0213.jpg"
+                ]
+            },
+            { 
+                title: "Silly Faces", 
+                cover: "https://i.ibb.co/VWgSvWLV/20250914-192456.jpg",
+                photos: [
+                    "https://i.ibb.co/s962Y5Wq/20241017-215626.jpg",
+                    "https://i.ibb.co/GQL21Zk7/20250202-171850.jpg",
+                    "https://i.ibb.co/Dfbt2k6T/20250525-170954.jpg",
+                    "https://i.ibb.co/xtfNDMZH/20250914-212918.jpg",
+                    "https://i.ibb.co/LDfZ2gcp/20250921-190904.jpg",
+                    "https://i.ibb.co/d4B7NJ0G/20251114-130502.jpg"
+                ]
+            },
+            { 
+                title: "Us Forever", 
+                cover: "https://i.ibb.co/jvc3SzYw/20260707-160637.jpg",
+                photos: [
+                    "https://i.ibb.co/nsnmprrc/20250202-103447.jpg",
+                    "https://i.ibb.co/VpW5P4yN/20250314-131909.jpg",
+                    "https://i.ibb.co/WW2Y7KzW/20250525-171058.jpg",
+                    "https://i.ibb.co/zTNwPRtN/20250914-192413.jpg",
+                    "https://i.ibb.co/jXGVwpS/20260720-181931.jpg",
+                    "https://i.ibb.co/wFN02rQc/20260809-143314.jpg"
+                ]
+            }
+        ];
+
+        function initAlbums() {
+            const grid = document.getElementById('album-grid');
+            grid.innerHTML = '';
+            albums.forEach((album, idx) => {
+                grid.innerHTML += `
+                    <div onclick="openAlbum(${idx})" class="glass rounded-2xl p-4 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1 group">
+                        <div class="aspect-video w-full rounded-xl overflow-hidden mb-4 relative">
+                            <img src="${album.cover}" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"></div>
+                        </div>
+                        <h3 class="font-script text-2xl text-center text-pink-600">${album.title}</h3>
+                    </div>
+                `;
+            });
+        }
+
+        function openAlbum(idx) {
+            const modal = document.getElementById('album-modal');
+            const title = document.getElementById('modal-title');
+            const photosContainer = document.getElementById('modal-photos');
+            
+            title.innerText = albums[idx].title;
+            photosContainer.innerHTML = '';
+            
+            // Render actual photos from the array
+            albums[idx].photos.forEach(photoUrl => {
+                photosContainer.innerHTML += `
+                    <div class="aspect-square rounded-lg overflow-hidden shadow-lg bg-gray-100">
+                        <img src="${photoUrl}" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                `;
+            });
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAlbum() {
+            const modal = document.getElementById('album-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 5. Candle Blow Logic
+        const btn = document.getElementById('blow-btn');
+        const progress = document.getElementById('blow-progress');
+        const flame = document.getElementById('candle-flame');
+        let holdTimer;
+        let progressVal = 0;
+        let progressInterval;
+        const requiredHoldTime = 2000;
+
+        function startBlow(e) {
+            if(e.type === 'touchstart') e.preventDefault();
+            if(flame.classList.contains('out')) return;
+
+            progressVal = 0;
+            progressInterval = setInterval(() => {
+                progressVal += (100 / (requiredHoldTime / 50)); 
+                progress.style.width = Math.min(progressVal, 100) + '%';
+            }, 50);
+
+            holdTimer = setTimeout(() => {
+                extinguishCandle();
+            }, requiredHoldTime);
+        }
+
+        function stopBlow() {
+            clearTimeout(holdTimer);
+            clearInterval(progressInterval);
+            if (!flame.classList.contains('out')) {
+                progressVal = 0;
+                progress.style.width = '0%';
+            }
+        }
+
+        function extinguishCandle() {
+            clearInterval(progressInterval);
+            progress.style.width = '100%';
+            flame.classList.add('out');
+            btn.innerText = "Yay! 🎊";
+            
+            const duration = 3000;
+            const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#fbcfe8', '#f472b6'] });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#fbcfe8', '#f472b6'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+
+            setTimeout(() => {
+                nextScreen('screen-final');
+            }, 2500);
+        }
+
+        btn.addEventListener('mousedown', startBlow);
+        btn.addEventListener('touchstart', startBlow, {passive: false});
+        btn.addEventListener('mouseup', stopBlow);
+        btn.addEventListener('mouseleave', stopBlow);
+        btn.addEventListener('touchend', stopBlow);
+        
+    </script>
+</body>
+</html>
